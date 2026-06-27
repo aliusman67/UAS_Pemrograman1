@@ -7,10 +7,13 @@ CREATE TABLE IF NOT EXISTS users (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
     nama_lengkap VARCHAR(100) NOT NULL,
     username VARCHAR(50) NOT NULL,
-    password VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     role VARCHAR(20) NOT NULL,
     UNIQUE KEY uk_users_username (username)
 ) ENGINE=InnoDB;
+
+-- Menyediakan ruang yang cukup untuk hash pada database versi lama.
+ALTER TABLE users MODIFY password VARCHAR(255) NOT NULL;
 
 CREATE TABLE IF NOT EXISTS produk (
     id_produk INT AUTO_INCREMENT PRIMARY KEY,
@@ -80,9 +83,11 @@ CREATE TABLE IF NOT EXISTS pembayaran (
 ) ENGINE=InnoDB;
 
 UPDATE users
-SET nama_lengkap = 'Administrator', password = 'admin123', role = 'admin'
+SET nama_lengkap = 'Administrator',
+    password = 'pbkdf2_sha256$210000$32WgGAWcoyyLhHMcEf56gw==$cVjYD0H6+L/mxXNBr6Yxq82GjmOni5HVqkWv2C7DC2s=',
+    role = 'admin'
 WHERE username = 'admin';
 
 INSERT INTO users (nama_lengkap, username, password, role)
-SELECT 'Administrator', 'admin', 'admin123', 'admin'
+SELECT 'Administrator', 'admin', 'pbkdf2_sha256$210000$32WgGAWcoyyLhHMcEf56gw==$cVjYD0H6+L/mxXNBr6Yxq82GjmOni5HVqkWv2C7DC2s=', 'admin'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');

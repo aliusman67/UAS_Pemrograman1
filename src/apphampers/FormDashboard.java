@@ -26,11 +26,12 @@ public class FormDashboard extends JFrame {
     private JButton btnTransaksi;
     private JButton btnPembayaran;
     private JButton btnLaporan;
+    private JButton btnPengguna;
     private JButton btnLogout;
 
-    public FormDashboard() {
+    public FormDashboard(String namaLengkap, String role) {
         setTitle("Dashboard - Aplikasi Penjualan Hampers");
-        setSize(600, 410);
+        setSize(600, 470);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -40,8 +41,12 @@ public class FormDashboard extends JFrame {
         lblTitle.setBounds(20, 10, 420, 30);
         add(lblTitle);
 
+        JLabel lblPenggunaAktif = new JLabel("Masuk sebagai: " + namaLengkap + " (" + role + ")");
+        lblPenggunaAktif.setBounds(20, 40, 540, 25);
+        add(lblPenggunaAktif);
+
         JPanel panelSummary = new JPanel(new GridLayout(2, 2, 10, 10));
-        panelSummary.setBounds(20, 50, 540, 120);
+        panelSummary.setBounds(20, 70, 540, 110);
         add(panelSummary);
 
         lblTotalProduk = new JLabel("Total Produk: 0");
@@ -61,31 +66,36 @@ public class FormDashboard extends JFrame {
         panelSummary.add(lblTotalPesanan);
 
         btnProduk = new JButton("Data Produk");
-        btnProduk.setBounds(20, 190, 160, 40);
+        btnProduk.setBounds(20, 200, 160, 40);
         add(btnProduk);
 
         btnHampers = new JButton("Data Hampers");
-        btnHampers.setBounds(200, 190, 160, 40);
+        btnHampers.setBounds(200, 200, 160, 40);
         add(btnHampers);
 
         btnPelanggan = new JButton("Data Pelanggan");
-        btnPelanggan.setBounds(380, 190, 160, 40);
+        btnPelanggan.setBounds(380, 200, 160, 40);
         add(btnPelanggan);
 
         btnTransaksi = new JButton("Transaksi");
-        btnTransaksi.setBounds(20, 250, 160, 40);
+        btnTransaksi.setBounds(20, 260, 160, 40);
         add(btnTransaksi);
 
         btnPembayaran = new JButton("Pembayaran");
-        btnPembayaran.setBounds(200, 250, 160, 40);
+        btnPembayaran.setBounds(200, 260, 160, 40);
         add(btnPembayaran);
 
         btnLaporan = new JButton("Laporan");
-        btnLaporan.setBounds(380, 250, 160, 40);
+        btnLaporan.setBounds(380, 260, 160, 40);
         add(btnLaporan);
 
+        btnPengguna = new JButton("Tambah Pengguna");
+        btnPengguna.setBounds(20, 315, 520, 35);
+        btnPengguna.setVisible("admin".equalsIgnoreCase(role));
+        add(btnPengguna);
+
         btnLogout = new JButton("Logout");
-        btnLogout.setBounds(20, 305, 520, 30);
+        btnLogout.setBounds(20, 365, 520, 30);
         add(btnLogout);
 
         btnProduk.addActionListener(new ActionListener() {
@@ -127,6 +137,13 @@ public class FormDashboard extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new FormLaporan().setVisible(true);
+            }
+        });
+
+        btnPengguna.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FormPengguna().setVisible(true);
             }
         });
 

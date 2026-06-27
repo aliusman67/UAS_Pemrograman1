@@ -31,3 +31,11 @@ Connector/J wajib ada di runtime walaupun source bisa dikompilasi hanya dengan A
 2. Klik **Run Project** atau tekan F6.
 3. Main Class proyek sudah diatur ke `apphampers.Main`.
 4. Login dengan username `admin` dan password `admin123`.
+
+## Pengguna dan keamanan password
+
+- Menu **Tambah Pengguna** tersedia di dashboard untuk akun dengan role `admin`.
+- Password minimal 8 karakter dan disimpan sebagai hash PBKDF2-HMAC-SHA256
+  dengan salt acak, bukan sebagai teks asli.
+- Bila aplikasi menemukan password polos dari database versi lama saat login,
+  password tersebut otomatis diubah menjadi hash setelah login berhasil.

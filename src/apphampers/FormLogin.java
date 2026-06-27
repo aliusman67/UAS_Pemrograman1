@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -76,21 +77,21 @@ public class FormLogin extends JFrame {
 
     private void login() {
         String username = txtUsername.getText().trim();
-        String password = new String(txtPassword.getPassword()).trim();
+        char[] password = txtPassword.getPassword();
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.length == 0) {
             JOptionPane.showMessageDialog(this, "Username dan password harus diisi", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            Arrays.fill(password, '\0');
             return;
         }
 
-        String sql = "SELECT id_user, nama_lengkap, role FROM users WHERE username = ? AND password = ?";
+        String sql = "SELECT id_user, nama_lengkap, role, password FROM users WHERE username = ?";
         try (Connection conn = Koneksi.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, username);
-            ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    new FormDashboard().setVisible(true);
+                if (rs.next() && passwordCocok(conn, rs.getInt("id_user"), password, rs.getString("password"))) {
+                    new FormDashboard(rs.getString("nama_lengkap"), rs.getString("role")).setVisible(true);
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(this, "Username atau password salah", "Login Gagal", JOptionPane.ERROR_MESSAGE);
@@ -100,6 +101,44 @@ public class FormLogin extends JFrame {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error saat login: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            Arrays.fill(password, '\0');
         }
+    }
+
+    private boolean passwordCocok(Connection conn, int idUser, char[] password, String passwordTersimpan)
+            throws Exception {
+        if (PasswordHasher.isHash(passwordTersimpan)) {
+            return PasswordHasher.verify(password, passwordTersimpan);
+        }
+
+        // Kompatibilitas untuk database lama: setelah login berhasil, password
+        // polos langsung diganti menjadi hash PBKDF2.
+        char[] passwordLama = passwordTersimpan == null
+                ? new char[0] : passwordTersimpan.toCharArray();
+        boolean cocok = samaSecaraKonstan(password, passwordLama);
+        Arrays.fill(passwordLama, '\0');
+
+        if (cocok) {
+            String sql = "UPDATE users SET password = ? WHERE id_user = ? AND password = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, PasswordHasher.hash(password));
+                ps.setInt(2, idUser);
+                ps.setString(3, passwordTersimpan);
+                ps.executeUpdate();
+            }
+        }
+        return cocok;
+    }
+
+    private boolean samaSecaraKonstan(char[] nilaiPertama, char[] nilaiKedua) {
+        int panjangMaksimal = Math.max(nilaiPertama.length, nilaiKedua.length);
+        int perbedaan = nilaiPertama.length ^ nilaiKedua.length;
+        for (int i = 0; i < panjangMaksimal; i++) {
+            char karakterPertama = i < nilaiPertama.length ? nilaiPertama[i] : 0;
+            char karakterKedua = i < nilaiKedua.length ? nilaiKedua[i] : 0;
+            perbedaan |= karakterPertama ^ karakterKedua;
+        }
+        return perbedaan == 0;
     }
 }

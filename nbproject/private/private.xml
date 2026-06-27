@@ -5,6 +5,9 @@
         <group>
             <file>file:/home/ghroot67/NetBeansProjects/Hampers_Uas/src/Hampers_App/LoginHampers.java</file>
             <file>file:/home/ghroot67/NetBeansProjects/Hampers_Uas/src/Dashboard/FormDashboard.java</file>
+            <file>file:/home/ghroot67/NetBeansProjects/Hampers_Uas/src/apphampers/Koneksi.java</file>
+            <file>file:/home/ghroot67/NetBeansProjects/Hampers_Uas/src/apphampers/PasswordHasher.java</file>
+            <file>file:/home/ghroot67/NetBeansProjects/Hampers_Uas/src/apphampers/FormDashboard.java</file>
         </group>
     </open-files>
 </project-private>
