@@ -59,12 +59,26 @@ secara konsisten.
 | `End` | Lompat ke slide terakhir |
 | `N` | Buka/tutup catatan pembicara |
 | `F` | Buka/tutup mode layar penuh |
-| `Esc` | Tutup menu atau catatan |
+| `O` | Buka/tutup ringkasan semua slide |
+| `L` | Aktifkan/nonaktifkan pointer presentasi |
+| `T` | Mulai/jeda timer presentasi |
+| `Shift` + klik timer | Reset timer ke `00:00` |
+| `Esc` | Tutup menu, ringkasan, pratinjau, atau catatan |
 | `?` | Tampilkan bantuan singkat |
 | Usap kiri/kanan | Navigasi pada layar sentuh |
 
 Daftar slide dapat dibuka melalui tombol menu di kiri atas. Tombol navigasi di
-bagian bawah juga dapat digunakan dengan mouse.
+bagian bawah juga dapat digunakan dengan mouse. Garis progres di tepi bawah
+dapat diklik untuk melompat langsung ke bagian presentasi tertentu.
+
+## Interaksi di dalam slide
+
+- Klik kartu fitur, pilihan role, dan tahap perjalanan pesanan untuk mengganti
+  detail yang ditampilkan.
+- Klik salah satu teknologi atau tabel database untuk menyorot elemen tersebut.
+- Klik lingkaran transaksi pada slide otomatisasi untuk memutar ulang alurnya.
+- Klik **Perbesar** pada screenshot aplikasi untuk membuka pratinjau penuh.
+- Tandai empat langkah implementasi pada slide 13 sebagai checklist kesiapan.
 
 ## Menyimpan sebagai PDF
 

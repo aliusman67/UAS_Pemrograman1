@@ -27,6 +27,10 @@
       <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M8 21H3v-5m18 0v5h-5"/></symbol>
       <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
       <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="i-pointer" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2"/></symbol>
+      <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5M10.5 7v7m-3.5-3.5h7"/></symbol>
       <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
       <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.4 4.6L18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4L12 3Zm7 11 .7 2.3L22 17l-2.3.7L19 20l-.7-2.3L16 17l2.3-.7L19 14Z"/></symbol>
     </defs>
@@ -48,6 +52,15 @@
     </div>
     <div class="topbar-actions">
       <button class="text-button" id="notesButton" type="button" aria-label="Tampilkan catatan pembicara">Catatan <kbd>N</kbd></button>
+      <button class="timer-button" id="timerButton" type="button" aria-label="Mulai timer presentasi" aria-pressed="false" title="Timer presentasi (T)">
+        <svg><use href="#i-clock"/></svg><span id="timerValue">00:00</span>
+      </button>
+      <button class="icon-button presenter-tool" id="overviewButton" type="button" aria-label="Tampilkan ringkasan semua slide" aria-expanded="false" title="Ringkasan slide (O)">
+        <svg><use href="#i-grid"/></svg>
+      </button>
+      <button class="icon-button presenter-tool" id="pointerButton" type="button" aria-label="Aktifkan pointer presentasi" aria-pressed="false" title="Pointer presentasi (L)">
+        <svg><use href="#i-pointer"/></svg>
+      </button>
       <button class="icon-button" id="fullscreenButton" type="button" aria-label="Layar penuh">
         <svg><use href="#i-expand"/></svg>
       </button>
@@ -199,7 +212,7 @@
         <div class="tech-copy">
           <span class="eyebrow light">05 · Teknologi</span>
           <h2>Fondasi yang stabil,<br><em>arsitektur yang jelas.</em></h2>
-          <p>Seluruh aplikasi berjalan sebagai desktop client dan terhubung langsung ke database melalui JDBC.</p>
+          <p>Seluruh aplikasi berjalan sebagai desktop client dan terhubung langsung ke database melalui JDBC. Klik tiap lapisan untuk menyorot perannya.</p>
           <div class="tech-tags"><span>Desktop</span><span>Relasional</span><span>Offline-first</span></div>
         </div>
         <div class="stack-visual">
@@ -273,7 +286,7 @@
           <div class="automation-stat"><strong>3×</strong><span>pencatatan turunan<br>berjalan otomatis</span></div>
         </div>
         <div class="automation-map">
-          <div class="trigger-node"><svg><use href="#i-cart"/></svg><span>Transaksi<br>& pembayaran</span></div>
+          <button class="trigger-node" id="automationTrigger" type="button" aria-label="Jalankan simulasi otomatisasi"><svg><use href="#i-cart"/></svg><span>Transaksi<br>& pembayaran</span><small>Klik untuk simulasi</small></button>
           <div class="map-lines" aria-hidden="true"><i></i><i></i><i></i></div>
           <div class="result-nodes">
             <article><svg><use href="#i-box"/></svg><div><small>01</small><strong>Stok berkurang</strong><span>Mutasi penjualan tercatat</span></div></article>
@@ -287,7 +300,7 @@
 
     <section class="slide slide-dark" id="slide-10" data-title="Struktur Database" data-notes="Tidak perlu menjelaskan sebelas tabel satu per satu. Fokus pada pesanan sebagai pusat relasi, lalu tunjukkan cabang detail, pembayaran, dan pengiriman.">
       <div class="slide-inner database-layout">
-        <div class="db-head"><span class="eyebrow light">09 · Database</span><h2>Pesanan menjadi pusat relasi.</h2><p>Struktur relasional menjaga setiap transaksi tetap dapat ditelusuri.</p></div>
+        <div class="db-head"><span class="eyebrow light">09 · Database</span><h2>Pesanan menjadi pusat relasi.</h2><p>Struktur relasional menjaga setiap transaksi tetap dapat ditelusuri. Klik tabel untuk menyorot entitas.</p></div>
         <div class="erd" aria-label="Diagram relasi database">
           <div class="db-table customer"><span>Master</span><strong>pelanggan</strong><small>id_pelanggan · identitas</small></div>
           <div class="relation r-one"><i></i><b>1 : n</b></div>
@@ -321,7 +334,10 @@
         </div>
         <figure class="app-window">
           <div class="window-bar"><i></i><i></i><i></i><span>Hampers App</span></div>
-          <div class="screenshot-wrap"><img id="demoImage" src="../assets/dashboard.png" alt="Tampilan dashboard aplikasi penjualan hampers"></div>
+          <div class="screenshot-wrap">
+            <img id="demoImage" src="../assets/dashboard.png" alt="Tampilan dashboard aplikasi penjualan hampers">
+            <button class="zoom-button" id="demoZoomButton" type="button" aria-label="Perbesar screenshot aplikasi"><svg><use href="#i-zoom"/></svg><span>Perbesar</span></button>
+          </div>
         </figure>
       </div>
       <span class="slide-no">11</span>
@@ -351,15 +367,18 @@
         <div class="setup-copy">
           <span class="eyebrow">12 · Implementasi</span>
           <h2>Empat langkah menuju <em>aplikasi siap jalan.</em></h2>
-          <p class="lead muted">Konfigurasi dilakukan sekali, lalu proyek dapat dibangun dan dijalankan dari NetBeans.</p>
+          <p class="lead muted">Konfigurasi dilakukan sekali. Tandai setiap langkah untuk mengecek kesiapan aplikasi.</p>
           <div class="credential-card"><svg><use href="#i-lock"/></svg><div><small>Akun awal</small><strong>admin / admin123</strong></div></div>
         </div>
-        <ol class="setup-steps">
-          <li><span>01</span><div><strong>Buka proyek</strong><p>Gunakan NetBeans dan pastikan Java Platform menunjuk ke JDK 22.</p></div><b>JDK</b></li>
-          <li><span>02</span><div><strong>Impor database</strong><p>Jalankan <code>db_hampers.sql</code> pada MySQL atau MariaDB.</p></div><b>SQL</b></li>
-          <li><span>03</span><div><strong>Atur koneksi</strong><p>Sesuaikan URL, username, password, serta MySQL Connector/J.</p></div><b>JDBC</b></li>
-          <li><span>04</span><div><strong>Clean & Run</strong><p>Build proyek dengan Ant, lalu jalankan <code>apphampers.Main</code>.</p></div><b>F6</b></li>
-        </ol>
+        <div class="setup-column">
+          <ol class="setup-steps">
+            <li><span>01</span><div><strong>Buka proyek</strong><p>Gunakan NetBeans dan pastikan Java Platform menunjuk ke JDK 22.</p></div><button class="setup-check" type="button" aria-pressed="false" aria-label="Tandai langkah Buka proyek selesai"><span>JDK</span><svg><use href="#i-check"/></svg></button></li>
+            <li><span>02</span><div><strong>Impor database</strong><p>Jalankan <code>db_hampers.sql</code> pada MySQL atau MariaDB.</p></div><button class="setup-check" type="button" aria-pressed="false" aria-label="Tandai langkah Impor database selesai"><span>SQL</span><svg><use href="#i-check"/></svg></button></li>
+            <li><span>03</span><div><strong>Atur koneksi</strong><p>Sesuaikan URL, username, password, serta MySQL Connector/J.</p></div><button class="setup-check" type="button" aria-pressed="false" aria-label="Tandai langkah Atur koneksi selesai"><span>JDBC</span><svg><use href="#i-check"/></svg></button></li>
+            <li><span>04</span><div><strong>Clean & Run</strong><p>Build proyek dengan Ant, lalu jalankan <code>apphampers.Main</code>.</p></div><button class="setup-check" type="button" aria-pressed="false" aria-label="Tandai langkah Clean and Run selesai"><span>F6</span><svg><use href="#i-check"/></svg></button></li>
+          </ol>
+          <div class="setup-progress" aria-live="polite"><div><i id="setupProgressBar"></i></div><span id="setupProgressText">0/4 siap</span></div>
+        </div>
       </div>
       <span class="slide-no">13</span>
     </section>
@@ -379,7 +398,7 @@
     </section>
   </main>
 
-  <div class="progress-track" aria-hidden="true"><div id="progressBar"></div></div>
+  <div class="progress-track" id="progressTrack" role="slider" tabindex="0" aria-label="Posisi slide" aria-valuemin="1" aria-valuemax="14" aria-valuenow="1"><div id="progressBar"></div></div>
   <nav class="deck-controls" aria-label="Navigasi slide">
     <button id="prevButton" type="button" aria-label="Slide sebelumnya">←</button>
     <div class="dot-indicator" id="dotIndicator"></div>
@@ -391,7 +410,20 @@
     <p id="notesContent"></p>
   </aside>
 
-  <div class="help-toast" id="helpToast" role="status">Navigasi: <kbd>←</kbd> <kbd>→</kbd> · Catatan: <kbd>N</kbd> · Layar penuh: <kbd>F</kbd></div>
+  <section class="slide-overview" id="slideOverview" aria-hidden="true" aria-label="Ringkasan semua slide">
+    <div class="overview-head"><div><span class="eyebrow">Navigasi cepat</span><h2>Semua slide</h2></div><button class="icon-button" id="closeOverviewButton" type="button" aria-label="Tutup ringkasan slide"><svg><use href="#i-close"/></svg></button></div>
+    <div class="overview-grid" id="overviewGrid"></div>
+    <p class="overview-hint">Pilih kartu untuk langsung membuka slide · tekan <kbd>O</kbd> untuk menutup</p>
+  </section>
+
+  <dialog class="image-dialog" id="imageDialog" aria-label="Pratinjau screenshot aplikasi">
+    <button class="dialog-close icon-button" id="closeImageDialog" type="button" aria-label="Tutup pratinjau"><svg><use href="#i-close"/></svg></button>
+    <img id="dialogImage" src="../assets/dashboard.png" alt="Pratinjau tampilan aplikasi">
+    <p id="dialogCaption">Ringkasan data dan pintasan ke seluruh modul.</p>
+  </dialog>
+
+  <div class="laser-pointer" id="laserPointer" aria-hidden="true"></div>
+  <div class="help-toast" id="helpToast" role="status"><strong>Kontrol presenter</strong><span><kbd>←</kbd><kbd>→</kbd> navigasi · <kbd>O</kbd> overview · <kbd>L</kbd> pointer · <kbd>T</kbd> timer · <kbd>F</kbd> layar penuh</span></div>
 
   <script src="script.js"></script>
 </body>
