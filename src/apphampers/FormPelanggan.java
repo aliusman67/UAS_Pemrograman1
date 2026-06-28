@@ -277,7 +277,8 @@ public class FormPelanggan extends JFrame {
         }
 
         String sql = "DELETE FROM pelanggan WHERE id_pelanggan = ?";
-        try (Connection conn = Koneksi.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = Koneksi.getConnection(); 
+            PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
             JOptionPane.showMessageDialog(this, "Data pelanggan berhasil dihapus", "Sukses", JOptionPane.INFORMATION_MESSAGE);

@@ -8,6 +8,8 @@ import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -229,13 +231,33 @@ public class FormProduk extends JFrame {
         }
 
         String sql = "INSERT INTO produk (nama_produk, kategori, harga, stok, satuan) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = Koneksi.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nama);
-            ps.setString(2, kategori);
-            ps.setDouble(3, harga);
-            ps.setInt(4, stok);
-            ps.setString(5, satuan);
-            ps.executeUpdate();
+        try (Connection conn = Koneksi.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, nama);
+                ps.setString(2, kategori);
+                ps.setDouble(3, harga);
+                ps.setInt(4, stok);
+                ps.setString(5, satuan);
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (!keys.next()) {
+                        throw new SQLException("ID produk tidak berhasil diperoleh");
+                    }
+                    if (stok > 0) {
+                        PencatatanService.catatMutasi(conn,
+                                new java.sql.Date(System.currentTimeMillis()), "Produk",
+                                keys.getInt(1), nama, "Masuk", stok, 0, stok,
+                                "Data Master", null, "Stok awal produk", null);
+                    }
+                }
+                conn.commit();
+            } catch (Exception ex) {
+                conn.rollback();
+                throw ex;
+            } finally {
+                conn.setAutoCommit(true);
+            }
             JOptionPane.showMessageDialog(this, "Data produk berhasil disimpan", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             loadProduk();
             resetForm();
@@ -278,14 +300,44 @@ public class FormProduk extends JFrame {
         }
 
         String sql = "UPDATE produk SET nama_produk = ?, kategori = ?, harga = ?, stok = ?, satuan = ? WHERE id_produk = ?";
-        try (Connection conn = Koneksi.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nama);
-            ps.setString(2, kategori);
-            ps.setDouble(3, harga);
-            ps.setInt(4, stok);
-            ps.setString(5, satuan);
-            ps.setInt(6, id);
-            ps.executeUpdate();
+        try (Connection conn = Koneksi.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                int stokSebelum;
+                String selectStok = "SELECT stok FROM produk WHERE id_produk = ? FOR UPDATE";
+                try (PreparedStatement psStok = conn.prepareStatement(selectStok)) {
+                    psStok.setInt(1, id);
+                    try (ResultSet rs = psStok.executeQuery()) {
+                        if (!rs.next()) {
+                            throw new SQLException("Produk tidak ditemukan");
+                        }
+                        stokSebelum = rs.getInt("stok");
+                    }
+                }
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setString(1, nama);
+                    ps.setString(2, kategori);
+                    ps.setDouble(3, harga);
+                    ps.setInt(4, stok);
+                    ps.setString(5, satuan);
+                    ps.setInt(6, id);
+                    ps.executeUpdate();
+                }
+                if (stok != stokSebelum) {
+                    String jenisMutasi = stok > stokSebelum ? "Masuk" : "Keluar";
+                    PencatatanService.catatMutasi(conn,
+                            new java.sql.Date(System.currentTimeMillis()), "Produk", id,
+                            nama, jenisMutasi, Math.abs(stok - stokSebelum), stokSebelum,
+                            stok, "Penyesuaian", null,
+                            "Perubahan stok dari form Data Produk", null);
+                }
+                conn.commit();
+            } catch (Exception ex) {
+                conn.rollback();
+                throw ex;
+            } finally {
+                conn.setAutoCommit(true);
+            }
             JOptionPane.showMessageDialog(this, "Data produk berhasil diubah", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             loadProduk();
             resetForm();

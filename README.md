@@ -1,8 +1,9 @@
 # Aplikasi Penjualan Hampers
 
 Aplikasi desktop berbasis Java Swing untuk mengelola penjualan hampers, mulai
-dari data master, pemesanan, pembayaran, sampai laporan transaksi. Data aplikasi
-disimpan di MySQL/MariaDB melalui JDBC.
+dari data master, pemesanan, pembayaran, pencatatan keuangan, mutasi stok,
+tracking pengiriman, sampai laporan transaksi. Data aplikasi disimpan di
+MySQL/MariaDB melalui JDBC.
 
 ![Dashboard Aplikasi Penjualan Hampers](assets/dashboard.png)
 
@@ -33,8 +34,16 @@ disimpan di MySQL/MariaDB melalui JDBC.
 - **Transaksi pemesanan** dengan kode invoice otomatis, beberapa item dalam satu
   pesanan, perhitungan subtotal dan total, pemeriksaan stok, serta cetak nota.
 - **Pembayaran** dengan metode Cash, Transfer Bank, QRIS, atau E-Wallet. Status
-  pembayaran ditentukan menjadi `Belum Lunas`, `DP`, atau `Lunas` berdasarkan
-  jumlah yang dibayar.
+  pembayaran bertahap dihitung secara akumulatif menjadi `Belum Lunas`, `DP`,
+  atau `Lunas`, lengkap dengan sisa tagihan dan kembalian.
+- **Pencatatan keuangan** untuk pemasukan dan pengeluaran manual, filter periode,
+  total pemasukan, total pengeluaran, serta saldo. Pembayaran pesanan otomatis
+  masuk ke buku kas dan tidak dapat dihapus sebagai entri manual.
+- **Barang masuk dan keluar** untuk produk maupun hampers. Setiap mutasi mencatat
+  jumlah, stok sebelum, stok sesudah, sumber, dan referensi. Stok awal,
+  penyesuaian data master, dan penjualan hampers dicatat otomatis.
+- **Tracking pengiriman** per invoice yang menyimpan alamat, kurir, nomor resi,
+  tanggal kirim, estimasi tiba, status terkini, dan riwayat perubahan status.
 - **Laporan transaksi** untuk semua tanggal atau rentang tanggal tertentu,
   lengkap dengan detail hampers, status pembayaran terakhir, total pendapatan
   lunas, dan tampilan cetak.
@@ -46,6 +55,7 @@ disimpan di MySQL/MariaDB melalui JDBC.
 | --- | :---: | :---: |
 | Dashboard dan data master | Ya | Ya |
 | Transaksi, pembayaran, dan laporan | Ya | Ya |
+| Keuangan, mutasi stok, dan pengiriman | Ya | Ya |
 | Tambah pengguna | Ya | Tidak |
 | Logout | Ya | Ya |
 
@@ -98,13 +108,26 @@ File SQL tersebut akan:
 
 1. membuat database `db_hampers` jika belum ada;
 2. membuat seluruh tabel dan relasinya;
-3. membuat atau memperbarui akun administrator awal.
+3. membuat tabel keuangan, mutasi barang, pengiriman, dan riwayat pengiriman;
+4. memigrasikan pembayaran lama ke buku kas tanpa membuat duplikat;
+5. membuat atau memperbarui akun administrator awal.
 
 Impor melalui phpMyAdmin dengan memilih tab **Import**, atau melalui terminal:
 
 ```bash
 mysql -u root -p < db_hampers.sql
 ```
+
+Jika database `db_hampers` dari versi lama sudah berisi data, jalankan skrip
+migrasi khusus agar akun dan data lama tidak diinisialisasi ulang:
+
+```bash
+mysql -u root -p < migrasi_fitur_operasional.sql
+```
+
+Skrip migrasi bersifat idempoten: tabel hanya dibuat jika belum tersedia dan
+pembayaran lama hanya dicatat satu kali di buku kas. Tetap buat backup database
+sebelum melakukan migrasi pada lingkungan produksi.
 
 ### 3. Atur koneksi database
 
@@ -163,8 +186,14 @@ Alur penggunaan yang disarankan:
    transaksi dan pengurangan stok dilakukan dalam satu transaksi database agar
    data tetap konsisten.
 5. Buka menu **Pembayaran**, pilih kode pesanan, metode pembayaran, dan masukkan
-   jumlah bayar.
-6. Buka menu **Laporan** untuk melihat transaksi dan total pendapatan yang sudah
+   jumlah bayar. Nominal yang diterima otomatis masuk sebagai pemasukan.
+6. Gunakan **Mutasi Stok** untuk mencatat pembelian atau pengeluaran barang di
+   luar transaksi. Mutasi dari penjualan hampers sudah dibuat otomatis.
+7. Buka **Pengiriman**, pilih invoice, isi alamat dan data kurir, lalu perbarui
+   status sampai `Terkirim`. Setiap pembaruan tersimpan sebagai riwayat.
+8. Buka **Keuangan** untuk mencatat biaya operasional atau pemasukan manual dan
+   melihat saldo berdasarkan periode.
+9. Buka menu **Laporan** untuk melihat transaksi dan total pendapatan yang sudah
    berstatus lunas. Isi kedua tanggal dalam format `yyyy-MM-dd` jika ingin
    memfilter periode.
 
@@ -181,17 +210,26 @@ Kode pesanan dibuat otomatis dalam format `INV-001`, `INV-002`, dan seterusnya.
 | `pesanan` | Header transaksi dan total pesanan |
 | `detail_pesanan` | Daftar hampers, harga, jumlah, dan subtotal per pesanan |
 | `pembayaran` | Riwayat pembayaran dan status pembayaran pesanan |
+| `keuangan` | Buku kas pemasukan/pengeluaran manual dan dari pembayaran |
+| `mutasi_barang` | Riwayat barang masuk/keluar beserta perubahan stok |
+| `pengiriman` | Data kurir, resi, jadwal, dan status pengiriman per pesanan |
+| `riwayat_pengiriman` | Timeline perubahan status sebuah pengiriman |
 
 Relasi utamanya adalah:
 
 ```text
 pelanggan 1 --- n pesanan 1 --- n detail_pesanan n --- 1 hampers
                        |
-                       +--- n pembayaran
+                       +--- n pembayaran 1 --- 0..1 keuangan
+                       |
+                       +--- 0..1 pengiriman 1 --- n riwayat_pengiriman
+
+produk/hampers 1 --- n mutasi_barang
 ```
 
-Foreign key memakai InnoDB. Penghapusan pesanan akan menghapus detail dan
-pembayarannya, sedangkan data pelanggan atau hampers yang masih digunakan oleh
+Foreign key memakai InnoDB. Penghapusan pesanan akan menghapus detail,
+pembayaran, dan pengirimannya. Catatan audit keuangan serta mutasi stok tetap
+disimpan, sedangkan data pelanggan atau hampers yang masih digunakan oleh
 pesanan tidak dapat dihapus begitu saja.
 
 ## Struktur proyek
@@ -212,10 +250,15 @@ Hampers_Uas/
 │       ├── FormTransaksi.java
 │       ├── FormPembayaran.java
 │       ├── FormLaporan.java
+│       ├── FormKeuangan.java
+│       ├── FormMutasiBarang.java
+│       ├── FormPengiriman.java
 │       ├── FormPengguna.java
+│       ├── PencatatanService.java
 │       └── PasswordHasher.java
 ├── build.xml                # Script build Ant/NetBeans
 ├── db_hampers.sql           # Skema database dan akun awal
+├── migrasi_fitur_operasional.sql # Upgrade database versi lama
 └── README.md
 ```
 
@@ -245,7 +288,11 @@ Seluruh screenshot aplikasi disimpan di folder [`assets`](assets).
   </tr>
   <tr>
     <td width="50%"><strong>Tambah Pengguna</strong><br><img src="assets/tambah-pengguna.png" alt="Form tambah pengguna"></td>
-    <td width="50%"></td>
+    <td width="50%"><strong>Pencatatan Keuangan</strong><br><img src="assets/keuangan.png" alt="Form pencatatan keuangan"></td>
+  </tr>
+  <tr>
+    <td width="50%"><strong>Mutasi Stok</strong><br><img src="assets/mutasi-stok.png" alt="Form barang masuk dan keluar"></td>
+    <td width="50%"><strong>Tracking Pengiriman</strong><br><img src="assets/pengiriman.png" alt="Form tracking pengiriman"></td>
   </tr>
 </table>
 
@@ -274,7 +321,8 @@ dengan konfigurasi server. Perbarui nilai `USER` dan `PASSWORD`.
 
 ### `Unknown database 'db_hampers'` atau tabel tidak ditemukan
 
-Impor ulang `db_hampers.sql` dan pastikan aplikasi terhubung ke port serta nama
+Untuk instalasi baru, impor `db_hampers.sql`. Untuk database versi lama, impor
+`migrasi_fitur_operasional.sql`. Pastikan aplikasi terhubung ke port serta nama
 database yang benar.
 
 ### Menu Tambah Pengguna tidak terlihat

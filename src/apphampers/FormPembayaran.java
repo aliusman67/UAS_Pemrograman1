@@ -5,9 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JButton;
@@ -30,11 +32,13 @@ public class FormPembayaran extends JFrame {
     private JComboBox<String> cmbMetodePembayaran;
     private JTextField txtJumlahBayar;
     private JTextField txtKembalian;
+    private JTextField txtSisaTagihan;
     private JComboBox<String> cmbStatusPembayaran;
     private JTable tblPembayaran;
     private DefaultTableModel model;
     private JButton btnSimpan;
     private JButton btnReset;
+    private double totalSudahDibayar;
 
     public FormPembayaran() {
         setTitle("Pembayaran");
@@ -124,6 +128,15 @@ public class FormPembayaran extends JFrame {
         btnReset.setBounds(280, 210, 120, 30);
         add(btnReset);
 
+        JLabel lblSisaTagihan = new JLabel("Sisa Tagihan:");
+        lblSisaTagihan.setBounds(420, 210, 120, 25);
+        add(lblSisaTagihan);
+
+        txtSisaTagihan = new JTextField("0.00");
+        txtSisaTagihan.setBounds(540, 210, 260, 25);
+        txtSisaTagihan.setEditable(false);
+        add(txtSisaTagihan);
+
         model = new DefaultTableModel(new String[]{"ID Pembayaran", "Kode Pesanan", "Nama Pelanggan", "Total", "Tanggal Bayar", "Metode", "Jumlah Bayar", "Kembalian", "Status"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -197,13 +210,20 @@ public class FormPembayaran extends JFrame {
         if (kode == null) {
             return;
         }
-        String sql = "SELECT p.total, pel.nama_pelanggan FROM pesanan p JOIN pelanggan pel ON p.id_pelanggan = pel.id_pelanggan WHERE p.kode_pesanan = ?";
+        String sql = "SELECT p.total, pel.nama_pelanggan, "
+                + "COALESCE((SELECT SUM(pay.jumlah_bayar - GREATEST(pay.kembalian, 0)) "
+                + "FROM pembayaran pay WHERE pay.id_pesanan = p.id_pesanan), 0) AS sudah_dibayar "
+                + "FROM pesanan p JOIN pelanggan pel ON p.id_pelanggan = pel.id_pelanggan "
+                + "WHERE p.kode_pesanan = ?";
         try (Connection conn = Koneksi.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, kode);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     txtTotalTagihan.setText(String.format("%.2f", rs.getDouble("total")));
                     txtNamaPelanggan.setText(rs.getString("nama_pelanggan"));
+                    totalSudahDibayar = rs.getDouble("sudah_dibayar");
+                    txtSisaTagihan.setText(String.format("%.2f",
+                            Math.max(0, rs.getDouble("total") - totalSudahDibayar)));
                     calculateKembalian();
                 }
             }
@@ -219,18 +239,32 @@ public class FormPembayaran extends JFrame {
             if (Double.isNaN(bayar) || Double.isInfinite(bayar) || bayar < 0) {
                 throw new NumberFormatException();
             }
-            double kembalian = bayar - total;
+            double sisaTagihan = Math.max(0, total - totalSudahDibayar);
+            double kembalian = Math.max(0, bayar - sisaTagihan);
             txtKembalian.setText(String.format("%.2f", kembalian));
-            if (bayar >= total) {
+            double pembayaranDiterapkan = Math.min(bayar, sisaTagihan);
+            double totalSetelahBayar = totalSudahDibayar + pembayaranDiterapkan;
+            if (totalSetelahBayar >= total) {
                 cmbStatusPembayaran.setSelectedItem("Lunas");
-            } else if (bayar > 0) {
+            } else if (totalSetelahBayar > 0) {
                 cmbStatusPembayaran.setSelectedItem("DP");
             } else {
                 cmbStatusPembayaran.setSelectedItem("Belum Lunas");
             }
         } catch (NumberFormatException ex) {
             txtKembalian.setText("0.00");
-            cmbStatusPembayaran.setSelectedItem("Belum Lunas");
+            try {
+                double total = Double.parseDouble(txtTotalTagihan.getText().trim());
+                if (total > 0 && totalSudahDibayar >= total) {
+                    cmbStatusPembayaran.setSelectedItem("Lunas");
+                } else if (totalSudahDibayar > 0) {
+                    cmbStatusPembayaran.setSelectedItem("DP");
+                } else {
+                    cmbStatusPembayaran.setSelectedItem("Belum Lunas");
+                }
+            } catch (NumberFormatException ignored) {
+                cmbStatusPembayaran.setSelectedItem("Belum Lunas");
+            }
         }
     }
 
@@ -255,13 +289,20 @@ public class FormPembayaran extends JFrame {
 
         double jumlahBayar;
         double kembalian;
+        double jumlahDiterapkan;
         try {
             double total = Double.parseDouble(totalText);
             jumlahBayar = Double.parseDouble(jumlahBayarText);
             if (Double.isNaN(jumlahBayar) || Double.isInfinite(jumlahBayar) || jumlahBayar < 0) {
                 throw new NumberFormatException();
             }
-            kembalian = jumlahBayar - total;
+            double sisaTagihan = Math.max(0, total - totalSudahDibayar);
+            if (sisaTagihan <= 0) {
+                JOptionPane.showMessageDialog(this, "Pesanan ini sudah lunas", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            kembalian = Math.max(0, jumlahBayar - sisaTagihan);
+            jumlahDiterapkan = jumlahBayar - kembalian;
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Jumlah bayar harus berupa angka nol atau lebih", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
@@ -275,14 +316,31 @@ public class FormPembayaran extends JFrame {
         }
 
         String sql = "INSERT INTO pembayaran (id_pesanan, tanggal_bayar, metode_pembayaran, jumlah_bayar, kembalian, status_pembayaran) VALUES ((SELECT id_pesanan FROM pesanan WHERE kode_pesanan = ?), ?, ?, ?, ?, ?)";
-        try (Connection conn = Koneksi.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, kode);
-            ps.setDate(2, java.sql.Date.valueOf(tanggal));
-            ps.setString(3, metode);
-            ps.setDouble(4, jumlahBayar);
-            ps.setDouble(5, kembalian);
-            ps.setString(6, status);
-            ps.executeUpdate();
+        try (Connection conn = Koneksi.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, kode);
+                ps.setDate(2, java.sql.Date.valueOf(tanggal));
+                ps.setString(3, metode);
+                ps.setDouble(4, jumlahBayar);
+                ps.setDouble(5, kembalian);
+                ps.setString(6, status);
+                ps.executeUpdate();
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (!keys.next()) {
+                        throw new java.sql.SQLException("ID pembayaran tidak berhasil diperoleh");
+                    }
+                    PencatatanService.catatPemasukanPembayaran(conn,
+                            java.sql.Date.valueOf(tanggal), keys.getInt(1), kode,
+                            BigDecimal.valueOf(jumlahDiterapkan));
+                }
+                conn.commit();
+            } catch (Exception ex) {
+                conn.rollback();
+                throw ex;
+            } finally {
+                conn.setAutoCommit(true);
+            }
             JOptionPane.showMessageDialog(this, "Pembayaran berhasil disimpan", "Sukses", JOptionPane.INFORMATION_MESSAGE);
             loadPembayaran();
             resetForm();

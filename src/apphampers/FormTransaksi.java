@@ -431,6 +431,7 @@ public class FormTransaksi extends JFrame {
                         try (PreparedStatement psDetail = conn.prepareStatement(insertDetail)) {
                             for (int i = 0; i < model.getRowCount(); i++) {
                                 int idHampers = Integer.parseInt(model.getValueAt(i, 0).toString());
+                                String namaHampers = model.getValueAt(i, 1).toString();
                                 double harga = Double.parseDouble(model.getValueAt(i, 2).toString());
                                 int jumlah = Integer.parseInt(model.getValueAt(i, 3).toString());
                                 double subtotal = Double.parseDouble(model.getValueAt(i, 4).toString());
@@ -449,6 +450,10 @@ public class FormTransaksi extends JFrame {
                                 psDetail.setDouble(5, subtotal);
                                 psDetail.executeUpdate();
                                 updateHampersStock(conn, idHampers, stock - jumlah);
+                                PencatatanService.catatMutasi(conn,
+                                        java.sql.Date.valueOf(tanggal), "Hampers", idHampers,
+                                        namaHampers, "Keluar", jumlah, stock, stock - jumlah,
+                                        "Transaksi", kode, "Penjualan hampers", idPesanan);
                             }
                         }
                         conn.commit();

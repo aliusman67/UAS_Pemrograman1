@@ -26,12 +26,15 @@ public class FormDashboard extends JFrame {
     private JButton btnTransaksi;
     private JButton btnPembayaran;
     private JButton btnLaporan;
+    private JButton btnKeuangan;
+    private JButton btnMutasiBarang;
+    private JButton btnPengiriman;
     private JButton btnPengguna;
     private JButton btnLogout;
 
     public FormDashboard(String namaLengkap, String role) {
         setTitle("Dashboard - Aplikasi Penjualan Hampers");
-        setSize(600, 470);
+        setSize(600, 520);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
         setLocationRelativeTo(null);
@@ -89,13 +92,25 @@ public class FormDashboard extends JFrame {
         btnLaporan.setBounds(380, 260, 160, 40);
         add(btnLaporan);
 
+        btnKeuangan = new JButton("Keuangan");
+        btnKeuangan.setBounds(20, 315, 160, 40);
+        add(btnKeuangan);
+
+        btnMutasiBarang = new JButton("Mutasi Stok");
+        btnMutasiBarang.setBounds(200, 315, 160, 40);
+        add(btnMutasiBarang);
+
+        btnPengiriman = new JButton("Pengiriman");
+        btnPengiriman.setBounds(380, 315, 160, 40);
+        add(btnPengiriman);
+
         btnPengguna = new JButton("Tambah Pengguna");
-        btnPengguna.setBounds(20, 315, 520, 35);
+        btnPengguna.setBounds(20, 370, 520, 35);
         btnPengguna.setVisible("admin".equalsIgnoreCase(role));
         add(btnPengguna);
 
         btnLogout = new JButton("Logout");
-        btnLogout.setBounds(20, 365, 520, 30);
+        btnLogout.setBounds(20, 420, 520, 30);
         add(btnLogout);
 
         btnProduk.addActionListener(new ActionListener() {
@@ -137,6 +152,27 @@ public class FormDashboard extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new FormLaporan().setVisible(true);
+            }
+        });
+
+        btnKeuangan.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FormKeuangan().setVisible(true);
+            }
+        });
+
+        btnMutasiBarang.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FormMutasiBarang().setVisible(true);
+            }
+        });
+
+        btnPengiriman.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new FormPengiriman().setVisible(true);
             }
         });
 
