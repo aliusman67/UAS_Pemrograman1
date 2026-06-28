@@ -94,7 +94,7 @@ database MySQL.
 Jika menggunakan Git:
 
 ```bash
-git clone <url-repository>
+git clone https://github.com/aliusman67/UAS_Pemrograman1
 cd Hampers_Uas
 ```
 
