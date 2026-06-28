@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f35">
+  <meta name="description" content="Presentasi interaktif Aplikasi Penjualan Hampers berbasis Java Swing dan MySQL.">
+  <title>Presentasi · Aplikasi Penjualan Hampers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true">
+    <defs>
+      <symbol id="i-gift" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 1 1 2.1-3.85C11 4.5 12 7 12 7Zm0 0h4.5a2.5 2.5 0 1 0-2.1-3.85C13 4.5 12 7 12 7Z"/></symbol>
+      <symbol id="i-box" viewBox="0 0 24 24"><path d="m21 8-9 5-9-5m9 5v9M4.5 6.5 12 2l7.5 4.5A3 3 0 0 1 21 9.1v5.8a3 3 0 0 1-1.5 2.6L12 22l-7.5-4.5A3 3 0 0 1 3 14.9V9.1a3 3 0 0 1 1.5-2.6Z"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 3h2l2.4 11.5a2 2 0 0 0 2 1.5H18a2 2 0 0 0 2-1.6L21.5 7H6M10 21a1 1 0 1 1-2 0 1 1 0 0 1 2 0Zm10 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></symbol>
+      <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M20 7V5a2 2 0 0 0-2-2H5a3 3 0 0 0 0 6h16v10a2 2 0 0 1-2 2H5a3 3 0 0 1-3-3V6M16 14h2"/></symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24"><path d="M10 17h4V5H2v12h3m9-8h4l4 4v4h-3M8 19.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm13 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10m6 10V4m6 16v-7m6 7H2"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Zm-3-10 2 2 4-4"/></symbol>
+      <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v6c0 1.7 4 3 9 3s9-1.3 9-3V5M3 11v6c0 1.7 4 3 9 3s9-1.3 9-3v-6"/></symbol>
+      <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 9-3 3 3 3m8-6 3 3-3 3m-2-9-4 12"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M8 21H3v-5m18 0v5h-5"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.4 4.6L18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4L12 3Zm7 11 .7 2.3L22 17l-2.3.7L19 20l-.7-2.3L16 17l2.3-.7L19 14Z"/></symbol>
+    </defs>
+  </svg>
+
+  <a class="skip-link" href="#slide-1">Lewati ke presentasi</a>
+
+  <header class="topbar" aria-label="Kontrol presentasi">
+    <button class="icon-button" id="menuButton" type="button" aria-label="Buka daftar slide" aria-expanded="false">
+      <svg><use href="#i-menu"/></svg>
+    </button>
+    <a class="brand" href="#1" aria-label="Ke slide pembuka">
+      <span class="brand-mark"><svg><use href="#i-gift"/></svg></span>
+      <span>Hampers<span class="brand-dot">.</span></span>
+    </a>
+    <div class="topbar-meta">
+      <span id="slideLabel">Pembuka</span>
+      <span class="slide-count"><strong id="currentNumber">01</strong> / <span id="totalNumber">14</span></span>
+    </div>
+    <div class="topbar-actions">
+      <button class="text-button" id="notesButton" type="button" aria-label="Tampilkan catatan pembicara">Catatan <kbd>N</kbd></button>
+      <button class="icon-button" id="fullscreenButton" type="button" aria-label="Layar penuh">
+        <svg><use href="#i-expand"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <aside class="slide-menu" id="slideMenu" aria-label="Daftar slide" aria-hidden="true">
+    <div class="menu-heading">
+      <div><span class="eyebrow">Navigasi</span><h2>Daftar slide</h2></div>
+      <button class="icon-button" id="closeMenuButton" type="button" aria-label="Tutup daftar slide"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <nav id="slideList"></nav>
+    <p class="menu-hint">Gunakan <kbd>←</kbd> <kbd>→</kbd> atau usap layar.</p>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <main class="deck" id="deck">
+    <section class="slide slide-cover is-active" id="slide-1" data-title="Pembuka" data-notes="Buka dengan konteks singkat: aplikasi ini menyatukan pekerjaan yang sebelumnya tersebar—mulai dari mencatat produk sampai memastikan hampers diterima pelanggan.">
+      <div class="cover-orb orb-one"></div><div class="cover-orb orb-two"></div>
+      <div class="slide-inner cover-grid">
+        <div class="cover-copy">
+          <div class="pill pill-light"><span></span> Sistem Informasi Penjualan</div>
+          <h1>Aplikasi Penjualan <em>Hampers</em></h1>
+          <p class="lead">Satu aplikasi desktop untuk mengelola pesanan, pembayaran, stok, pengiriman, dan laporan secara terpadu.</p>
+          <div class="presenter-line">
+            <div class="avatar">TI</div>
+            <div><strong>Presentasi Proyek</strong><span>Java Swing · MySQL · JDBC</span></div>
+          </div>
+        </div>
+        <div class="cover-visual" aria-label="Ilustrasi sistem aplikasi hampers">
+          <div class="gift-card">
+            <span class="gift-ribbon"></span>
+            <div class="gift-icon"><svg><use href="#i-gift"/></svg></div>
+            <strong>Semua proses.</strong><span>Satu kendali.</span>
+          </div>
+          <div class="floating-tag tag-a"><svg><use href="#i-cart"/></svg><span>Pesanan</span></div>
+          <div class="floating-tag tag-b"><svg><use href="#i-wallet"/></svg><span>Pembayaran</span></div>
+          <div class="floating-tag tag-c"><svg><use href="#i-truck"/></svg><span>Pengiriman</span></div>
+        </div>
+      </div>
+      <button class="start-button" data-go="next" type="button">Mulai presentasi <svg><use href="#i-arrow"/></svg></button>
+      <span class="slide-no">01</span>
+    </section>
+
+    <section class="slide" id="slide-2" data-title="Latar Belakang" data-notes="Tekankan problem operasional: bukan hanya pencatatan yang lambat, tetapi data antarproses mudah tidak sinkron. Aplikasi menjawabnya dengan satu sumber data.">
+      <div class="slide-inner split-intro">
+        <div>
+          <span class="eyebrow">01 · Latar belakang</span>
+          <h2>Dari proses yang terpencar,<br>menjadi <em>satu alur kerja.</em></h2>
+          <p class="lead muted">Bisnis hampers melibatkan banyak aktivitas yang saling bergantung. Pencatatan manual membuat data lambat, berulang, dan rawan tidak konsisten.</p>
+        </div>
+        <div class="problem-solution">
+          <article class="ps-card problem-card">
+            <span class="card-index">Masalah</span>
+            <ul class="clean-list cross-list">
+              <li>Stok dan pesanan dicatat terpisah</li>
+              <li>Status bayar sulit dipantau</li>
+              <li>Riwayat kirim tercecer</li>
+              <li>Laporan harus direkap ulang</li>
+            </ul>
+          </article>
+          <div class="transform-arrow"><svg><use href="#i-arrow"/></svg></div>
+          <article class="ps-card solution-card">
+            <span class="card-index">Solusi</span>
+            <h3>Terintegrasi dari hulu ke hilir</h3>
+            <p>Satu aplikasi, satu database, dan pencatatan otomatis di setiap tahap penting.</p>
+            <div class="mini-flow"><span>Input</span><i></i><span>Proses</span><i></i><span>Laporan</span></div>
+          </article>
+        </div>
+      </div>
+      <span class="slide-no">02</span>
+    </section>
+
+    <section class="slide" id="slide-3" data-title="Tujuan Sistem" data-notes="Jelaskan bahwa tujuan sistem tidak hanya digitalisasi form. Ada tiga nilai: kendali operasional, akurasi transaksi, dan visibilitas keputusan.">
+      <div class="slide-inner">
+        <div class="section-head">
+          <div><span class="eyebrow">02 · Tujuan</span><h2>Tiga dampak utama</h2></div>
+          <p>Mengubah data operasional menjadi proses yang lebih cepat, aman, dan mudah diawasi.</p>
+        </div>
+        <div class="impact-grid">
+          <article class="impact-card accent-orange">
+            <span class="huge-number">01</span><svg><use href="#i-box"/></svg>
+            <h3>Kendali operasional</h3><p>Produk, hampers, pelanggan, stok, dan pengiriman dikelola dari satu tempat.</p>
+          </article>
+          <article class="impact-card accent-green">
+            <span class="huge-number">02</span><svg><use href="#i-check"/></svg>
+            <h3>Akurasi transaksi</h3><p>Subtotal, total, status bayar, dan pengurangan stok dihitung secara konsisten.</p>
+          </article>
+          <article class="impact-card accent-gold">
+            <span class="huge-number">03</span><svg><use href="#i-chart"/></svg>
+            <h3>Informasi siap pakai</h3><p>Dashboard dan laporan menyajikan ringkasan untuk mendukung keputusan.</p>
+          </article>
+        </div>
+        <div class="quote-strip"><svg><use href="#i-spark"/></svg><p>“Bukan sekadar menyimpan data—sistem menjaga setiap proses tetap terhubung.”</p></div>
+      </div>
+      <span class="slide-no">03</span>
+    </section>
+
+    <section class="slide" id="slide-4" data-title="Fitur Utama" data-notes="Pilih beberapa fitur yang paling relevan dengan audiens. Kartu dapat diklik untuk membuka deskripsi singkat, sehingga slide bisa dipresentasikan secara fleksibel.">
+      <div class="slide-inner">
+        <div class="section-head compact">
+          <div><span class="eyebrow">03 · Kapabilitas</span><h2>Satu ekosistem, <em>sembilan fitur.</em></h2></div>
+          <p>Klik kartu untuk melihat perannya.</p>
+        </div>
+        <div class="feature-grid" id="featureGrid">
+          <button class="feature-card is-selected" type="button" data-feature="Ringkasan jumlah produk, hampers, pelanggan, dan pesanan dalam satu pandangan."><svg><use href="#i-chart"/></svg><span>Dashboard</span><small>01</small></button>
+          <button class="feature-card" type="button" data-feature="CRUD dan pencarian data produk, hampers, serta pelanggan sebagai fondasi transaksi."><svg><use href="#i-box"/></svg><span>Data master</span><small>02</small></button>
+          <button class="feature-card" type="button" data-feature="Invoice otomatis, beberapa item, validasi stok, kalkulasi subtotal, total, dan cetak nota."><svg><use href="#i-cart"/></svg><span>Transaksi</span><small>03</small></button>
+          <button class="feature-card" type="button" data-feature="Mendukung Cash, Transfer, QRIS, dan E-Wallet dengan status Belum Lunas, DP, atau Lunas."><svg><use href="#i-wallet"/></svg><span>Pembayaran</span><small>04</small></button>
+          <button class="feature-card" type="button" data-feature="Pemasukan pembayaran tercatat otomatis; pemasukan dan pengeluaran manual tetap tersedia."><svg><use href="#i-chart"/></svg><span>Keuangan</span><small>05</small></button>
+          <button class="feature-card" type="button" data-feature="Mencatat barang masuk/keluar, stok sebelum/sesudah, sumber, dan referensi audit."><svg><use href="#i-database"/></svg><span>Mutasi stok</span><small>06</small></button>
+          <button class="feature-card" type="button" data-feature="Alamat, kurir, resi, estimasi, status terkini, dan riwayat perubahan per invoice."><svg><use href="#i-truck"/></svg><span>Pengiriman</span><small>07</small></button>
+          <button class="feature-card" type="button" data-feature="Filter periode, detail hampers, status bayar terakhir, dan total pendapatan lunas."><svg><use href="#i-chart"/></svg><span>Laporan</span><small>08</small></button>
+          <button class="feature-card" type="button" data-feature="Admin dapat membuat akun admin atau kasir baru dengan password yang di-hash."><svg><use href="#i-users"/></svg><span>Pengguna</span><small>09</small></button>
+        </div>
+        <div class="feature-detail" id="featureDetail"><span>Dashboard</span><p>Ringkasan jumlah produk, hampers, pelanggan, dan pesanan dalam satu pandangan.</p></div>
+      </div>
+      <span class="slide-no">04</span>
+    </section>
+
+    <section class="slide" id="slide-5" data-title="Hak Akses" data-notes="Kasir tetap memperoleh akses ke semua kebutuhan operasional. Batas pentingnya adalah manajemen akun hanya milik admin.">
+      <div class="slide-inner permissions-layout">
+        <div class="permissions-copy">
+          <span class="eyebrow">04 · Hak akses</span>
+          <h2>Akses luas untuk operasi.<br><em>Kontrol khusus untuk akun.</em></h2>
+          <p class="lead muted">Dua role menjaga pekerjaan tetap praktis tanpa mengorbankan batas kewenangan.</p>
+          <div class="role-toggle" role="group" aria-label="Pilih role">
+            <button class="active" type="button" data-role="admin">Administrator</button>
+            <button type="button" data-role="kasir">Kasir</button>
+          </div>
+        </div>
+        <div class="permission-panel" id="permissionPanel">
+          <div class="role-badge"><span>A</span><div><strong>Administrator</strong><small>Akses penuh</small></div></div>
+          <div class="permission-list">
+            <div><span>Dashboard & data master</span><b><svg><use href="#i-check"/></svg></b></div>
+            <div><span>Transaksi, bayar & laporan</span><b><svg><use href="#i-check"/></svg></b></div>
+            <div><span>Keuangan, stok & pengiriman</span><b><svg><use href="#i-check"/></svg></b></div>
+            <div class="admin-only"><span>Tambah pengguna</span><b><svg><use href="#i-check"/></svg></b></div>
+            <div><span>Logout</span><b><svg><use href="#i-check"/></svg></b></div>
+          </div>
+          <p id="roleNote"><svg><use href="#i-shield"/></svg> Admin dapat menambah akun kasir maupun admin baru.</p>
+        </div>
+      </div>
+      <span class="slide-no">05</span>
+    </section>
+
+    <section class="slide slide-dark" id="slide-6" data-title="Teknologi" data-notes="Stack sengaja sederhana dan sesuai kebutuhan aplikasi desktop. Java Swing untuk UI, JDBC sebagai jembatan, MySQL untuk persistensi, dan Ant/NetBeans untuk build.">
+      <div class="slide-inner tech-layout">
+        <div class="tech-copy">
+          <span class="eyebrow light">05 · Teknologi</span>
+          <h2>Fondasi yang stabil,<br><em>arsitektur yang jelas.</em></h2>
+          <p>Seluruh aplikasi berjalan sebagai desktop client dan terhubung langsung ke database melalui JDBC.</p>
+          <div class="tech-tags"><span>Desktop</span><span>Relasional</span><span>Offline-first</span></div>
+        </div>
+        <div class="stack-visual">
+          <article class="stack-card"><div class="stack-icon java">J</div><div><small>Bahasa</small><strong>Java 22</strong><span>Logika aplikasi</span></div></article>
+          <span class="stack-link"></span>
+          <article class="stack-card"><div class="stack-icon swing">UI</div><div><small>Antarmuka</small><strong>Java Swing</strong><span>Desktop interface</span></div></article>
+          <span class="stack-link"></span>
+          <article class="stack-card"><div class="stack-icon jdbc">↔</div><div><small>Akses data</small><strong>JDBC</strong><span>Connector/J</span></div></article>
+          <span class="stack-link"></span>
+          <article class="stack-card"><div class="stack-icon mysql"><svg><use href="#i-database"/></svg></div><div><small>Database</small><strong>MySQL</strong><span>MariaDB compatible</span></div></article>
+        </div>
+      </div>
+      <span class="slide-no">06</span>
+    </section>
+
+    <section class="slide" id="slide-7" data-title="Arsitektur" data-notes="Jelaskan arsitektur tiga lapis secara konseptual. Form menangani interaksi, service mengorkestrasi pencatatan lintas modul, dan database menjaga relasi serta transaksi.">
+      <div class="slide-inner">
+        <div class="section-head">
+          <div><span class="eyebrow">06 · Arsitektur</span><h2>Aliran data aplikasi</h2></div>
+          <p>Tiga lapis tanggung jawab memisahkan interaksi, aturan proses, dan penyimpanan.</p>
+        </div>
+        <div class="architecture">
+          <article class="arch-card">
+            <div class="arch-top"><span>01</span><svg><use href="#i-users"/></svg></div>
+            <small>Presentation layer</small><h3>Form Java Swing</h3><p>Input pengguna, validasi form, tabel, dan navigasi.</p>
+          </article>
+          <div class="arch-arrow"><span>event</span><svg><use href="#i-arrow"/></svg><span>result</span></div>
+          <article class="arch-card featured">
+            <div class="arch-top"><span>02</span><svg><use href="#i-code"/></svg></div>
+            <small>Application logic</small><h3>Service & JDBC</h3><p>Aturan bisnis, perhitungan, transaksi, dan pencatatan otomatis.</p>
+          </article>
+          <div class="arch-arrow"><span>SQL</span><svg><use href="#i-arrow"/></svg><span>data</span></div>
+          <article class="arch-card">
+            <div class="arch-top"><span>03</span><svg><use href="#i-database"/></svg></div>
+            <small>Data layer</small><h3>MySQL / MariaDB</h3><p>11 tabel relasional, foreign key, dan jejak audit.</p>
+          </article>
+        </div>
+        <div class="architecture-note"><svg><use href="#i-shield"/></svg><span>Penyimpanan pesanan dan pengurangan stok dijalankan dalam <strong>satu transaksi database</strong>.</span></div>
+      </div>
+      <span class="slide-no">07</span>
+    </section>
+
+    <section class="slide" id="slide-8" data-title="Alur Operasional" data-notes="Ikuti perjalanan satu order. Poin penting: dampak satu transaksi mengalir ke stok, buku kas, pengiriman, dan akhirnya laporan.">
+      <div class="slide-inner">
+        <div class="section-head compact">
+          <div><span class="eyebrow">07 · Alur operasional</span><h2>Satu pesanan, <em>satu jejak utuh.</em></h2></div>
+          <p>Klik setiap tahap untuk menyorot alurnya.</p>
+        </div>
+        <div class="journey" id="journey">
+          <button class="journey-step active" type="button" data-detail="Data produk, paket hampers, dan pelanggan disiapkan sebagai referensi transaksi."><span>1</span><svg><use href="#i-box"/></svg><strong>Siapkan data</strong><small>Produk · Hampers · Pelanggan</small></button>
+          <i></i>
+          <button class="journey-step" type="button" data-detail="Sistem membuat kode INV otomatis, menghitung total, lalu memotong stok secara transaksional."><span>2</span><svg><use href="#i-cart"/></svg><strong>Buat pesanan</strong><small>Invoice · Item · Total</small></button>
+          <i></i>
+          <button class="journey-step" type="button" data-detail="Pembayaran dapat bertahap. Akumulasi nominal menentukan status Belum Lunas, DP, atau Lunas."><span>3</span><svg><use href="#i-wallet"/></svg><strong>Terima bayar</strong><small>Cash · Bank · QRIS</small></button>
+          <i></i>
+          <button class="journey-step" type="button" data-detail="Kurir, resi, estimasi, dan setiap perubahan status tersimpan sebagai timeline pengiriman."><span>4</span><svg><use href="#i-truck"/></svg><strong>Kirim pesanan</strong><small>Kurir · Resi · Status</small></button>
+          <i></i>
+          <button class="journey-step" type="button" data-detail="Transaksi dapat difilter per periode dan pendapatan lunas dirangkum untuk evaluasi."><span>5</span><svg><use href="#i-chart"/></svg><strong>Lihat laporan</strong><small>Filter · Cetak · Evaluasi</small></button>
+        </div>
+        <div class="journey-detail" id="journeyDetail"><span>01</span><p>Data produk, paket hampers, dan pelanggan disiapkan sebagai referensi transaksi.</p></div>
+      </div>
+      <span class="slide-no">08</span>
+    </section>
+
+    <section class="slide slide-tinted" id="slide-9" data-title="Otomatisasi" data-notes="Ini pembeda penting sistem: beberapa pekerjaan sampingan tidak perlu diinput ulang. Tekankan konsistensi stok, kas, dan audit trail.">
+      <div class="slide-inner automation-layout">
+        <div class="automation-copy">
+          <span class="eyebrow">08 · Otomatisasi</span>
+          <h2>Sekali input,<br><em>beberapa proses bergerak.</em></h2>
+          <p class="lead muted">Otomatisasi mengurangi input ganda sekaligus menjaga data lintas modul tetap sinkron.</p>
+          <div class="automation-stat"><strong>3×</strong><span>pencatatan turunan<br>berjalan otomatis</span></div>
+        </div>
+        <div class="automation-map">
+          <div class="trigger-node"><svg><use href="#i-cart"/></svg><span>Transaksi<br>& pembayaran</span></div>
+          <div class="map-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="result-nodes">
+            <article><svg><use href="#i-box"/></svg><div><small>01</small><strong>Stok berkurang</strong><span>Mutasi penjualan tercatat</span></div></article>
+            <article><svg><use href="#i-wallet"/></svg><div><small>02</small><strong>Kas bertambah</strong><span>Pembayaran masuk ke keuangan</span></div></article>
+            <article><svg><use href="#i-database"/></svg><div><small>03</small><strong>Audit tersimpan</strong><span>Sumber & referensi dipertahankan</span></div></article>
+          </div>
+        </div>
+      </div>
+      <span class="slide-no">09</span>
+    </section>
+
+    <section class="slide slide-dark" id="slide-10" data-title="Struktur Database" data-notes="Tidak perlu menjelaskan sebelas tabel satu per satu. Fokus pada pesanan sebagai pusat relasi, lalu tunjukkan cabang detail, pembayaran, dan pengiriman.">
+      <div class="slide-inner database-layout">
+        <div class="db-head"><span class="eyebrow light">09 · Database</span><h2>Pesanan menjadi pusat relasi.</h2><p>Struktur relasional menjaga setiap transaksi tetap dapat ditelusuri.</p></div>
+        <div class="erd" aria-label="Diagram relasi database">
+          <div class="db-table customer"><span>Master</span><strong>pelanggan</strong><small>id_pelanggan · identitas</small></div>
+          <div class="relation r-one"><i></i><b>1 : n</b></div>
+          <div class="db-table order main-table"><span>Transaksi</span><strong>pesanan</strong><small>invoice · tanggal · total</small></div>
+          <div class="relation r-two"><i></i><b>1 : n</b></div>
+          <div class="db-branches">
+            <div class="db-table"><span>Rinci</span><strong>detail_pesanan</strong><small>hampers · qty · subtotal</small></div>
+            <div class="db-table"><span>Bayar</span><strong>pembayaran</strong><small>metode · nominal · status</small></div>
+            <div class="db-table"><span>Kirim</span><strong>pengiriman</strong><small>kurir · resi · status</small></div>
+          </div>
+          <div class="db-side-notes"><span>+ keuangan</span><span>+ mutasi_barang</span><span>+ riwayat_pengiriman</span></div>
+        </div>
+        <div class="db-caption"><span>11 tabel</span><span>InnoDB + Foreign Key</span><span>Cascade terkontrol</span></div>
+      </div>
+      <span class="slide-no">10</span>
+    </section>
+
+    <section class="slide" id="slide-11" data-title="Tampilan Aplikasi" data-notes="Gunakan slide ini sebagai mini-demo visual. Tab mengubah screenshot tanpa berpindah slide. Ceritakan perpindahan pengguna dari dashboard ke transaksi, pembayaran, lalu pengiriman.">
+      <div class="slide-inner demo-layout">
+        <div class="demo-copy">
+          <span class="eyebrow">10 · Antarmuka</span>
+          <h2>Dirancang untuk alur kerja yang <em>langsung dipahami.</em></h2>
+          <p>Pilih modul untuk menampilkan antarmuka aplikasi.</p>
+          <div class="demo-tabs" role="tablist" aria-label="Screenshot aplikasi">
+            <button class="active" type="button" role="tab" aria-selected="true" data-image="../assets/dashboard.png" data-caption="Ringkasan data dan pintasan ke seluruh modul.">Dashboard</button>
+            <button type="button" role="tab" aria-selected="false" data-image="../assets/transaksi.png" data-caption="Pembuatan invoice multi-item dengan perhitungan otomatis.">Transaksi</button>
+            <button type="button" role="tab" aria-selected="false" data-image="../assets/pembayaran.png" data-caption="Pembayaran bertahap dan status tagihan terkini.">Pembayaran</button>
+            <button type="button" role="tab" aria-selected="false" data-image="../assets/pengiriman.png" data-caption="Tracking resi, kurir, estimasi, dan riwayat status.">Pengiriman</button>
+          </div>
+          <div class="demo-caption"><span>01</span><p id="demoCaption">Ringkasan data dan pintasan ke seluruh modul.</p></div>
+        </div>
+        <figure class="app-window">
+          <div class="window-bar"><i></i><i></i><i></i><span>Hampers App</span></div>
+          <div class="screenshot-wrap"><img id="demoImage" src="../assets/dashboard.png" alt="Tampilan dashboard aplikasi penjualan hampers"></div>
+        </figure>
+      </div>
+      <span class="slide-no">11</span>
+    </section>
+
+    <section class="slide" id="slide-12" data-title="Keamanan & Integritas" data-notes="Bedakan keamanan akun dengan integritas data. Password dilindungi PBKDF2; konsistensi operasional dilindungi transaction, foreign key, dan audit trail.">
+      <div class="slide-inner security-layout">
+        <div class="section-head">
+          <div><span class="eyebrow">11 · Keamanan</span><h2>Melindungi akun.<br><em>Menjaga integritas data.</em></h2></div>
+          <div class="security-seal"><svg><use href="#i-shield"/></svg><span>Secure<br>by design</span></div>
+        </div>
+        <div class="security-grid">
+          <article class="security-main">
+            <div class="lock-orbit"><span class="orbit orbit-a"></span><span class="orbit orbit-b"></span><svg><use href="#i-lock"/></svg></div>
+            <div><span class="eyebrow">Password hashing</span><h3>PBKDF2-HMAC-SHA256</h3><div class="hash-spec"><span><strong>210K</strong> iterasi</span><span><strong>256</strong> bit key</span><span><strong>Random</strong> salt</span></div></div>
+          </article>
+          <article class="security-item"><span>01</span><div><strong>Migrasi otomatis</strong><p>Password lama di-upgrade menjadi hash setelah login berhasil.</p></div></article>
+          <article class="security-item"><span>02</span><div><strong>Transaksi atomik</strong><p>Pesanan dan perubahan stok berhasil atau batal bersama.</p></div></article>
+          <article class="security-item"><span>03</span><div><strong>Jejak audit</strong><p>Mutasi, pembayaran, dan riwayat kirim dapat ditelusuri.</p></div></article>
+        </div>
+      </div>
+      <span class="slide-no">12</span>
+    </section>
+
+    <section class="slide" id="slide-13" data-title="Menjalankan Aplikasi" data-notes="Slide teknis singkat. Untuk demo, pastikan MySQL aktif, database sudah diimpor, Connector/J ada, dan kredensial Koneksi.java sudah sesuai.">
+      <div class="slide-inner setup-layout">
+        <div class="setup-copy">
+          <span class="eyebrow">12 · Implementasi</span>
+          <h2>Empat langkah menuju <em>aplikasi siap jalan.</em></h2>
+          <p class="lead muted">Konfigurasi dilakukan sekali, lalu proyek dapat dibangun dan dijalankan dari NetBeans.</p>
+          <div class="credential-card"><svg><use href="#i-lock"/></svg><div><small>Akun awal</small><strong>admin / admin123</strong></div></div>
+        </div>
+        <ol class="setup-steps">
+          <li><span>01</span><div><strong>Buka proyek</strong><p>Gunakan NetBeans dan pastikan Java Platform menunjuk ke JDK 22.</p></div><b>JDK</b></li>
+          <li><span>02</span><div><strong>Impor database</strong><p>Jalankan <code>db_hampers.sql</code> pada MySQL atau MariaDB.</p></div><b>SQL</b></li>
+          <li><span>03</span><div><strong>Atur koneksi</strong><p>Sesuaikan URL, username, password, serta MySQL Connector/J.</p></div><b>JDBC</b></li>
+          <li><span>04</span><div><strong>Clean & Run</strong><p>Build proyek dengan Ant, lalu jalankan <code>apphampers.Main</code>.</p></div><b>F6</b></li>
+        </ol>
+      </div>
+      <span class="slide-no">13</span>
+    </section>
+
+    <section class="slide slide-closing" id="slide-14" data-title="Penutup" data-notes="Tutup dengan tiga kata kunci: terintegrasi, otomatis, dan terlacak. Setelah itu buka sesi pertanyaan atau lanjutkan ke demo langsung.">
+      <div class="closing-pattern"></div>
+      <div class="slide-inner closing-layout">
+        <div class="closing-mark"><svg><use href="#i-gift"/></svg></div>
+        <span class="eyebrow light">Kesimpulan</span>
+        <h2>Penjualan lebih rapi.<br>Operasional lebih <em>terkendali.</em></h2>
+        <p>Aplikasi Penjualan Hampers menghubungkan seluruh perjalanan pesanan—dari data master hingga laporan akhir.</p>
+        <div class="closing-points"><span><svg><use href="#i-check"/></svg> Terintegrasi</span><span><svg><use href="#i-check"/></svg> Otomatis</span><span><svg><use href="#i-check"/></svg> Terlacak</span></div>
+        <div class="qa-line"><i></i><strong>Terima kasih</strong><span>Pertanyaan & diskusi</span><i></i></div>
+      </div>
+      <button class="restart-button" type="button" data-go="first">Ulangi <svg><use href="#i-play"/></svg></button>
+      <span class="slide-no">14</span>
+    </section>
+  </main>
+
+  <div class="progress-track" aria-hidden="true"><div id="progressBar"></div></div>
+  <nav class="deck-controls" aria-label="Navigasi slide">
+    <button id="prevButton" type="button" aria-label="Slide sebelumnya">←</button>
+    <div class="dot-indicator" id="dotIndicator"></div>
+    <button id="nextButton" type="button" aria-label="Slide berikutnya">→</button>
+  </nav>
+
+  <aside class="speaker-notes" id="speakerNotes" aria-hidden="true">
+    <div><span class="eyebrow">Catatan pembicara</span><button id="closeNotesButton" class="icon-button" type="button" aria-label="Tutup catatan"><svg><use href="#i-close"/></svg></button></div>
+    <p id="notesContent"></p>
+  </aside>
+
+  <div class="help-toast" id="helpToast" role="status">Navigasi: <kbd>←</kbd> <kbd>→</kbd> · Catatan: <kbd>N</kbd> · Layar penuh: <kbd>F</kbd></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
